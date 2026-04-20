@@ -1,0 +1,13 @@
+{
+  "name": "Daily To-Do",
+  "short_name": "To-Do",
+  "description": "어디서든 동기화되는 할 일 관리",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f0e",
+  "theme_color": "#0f0f0e",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

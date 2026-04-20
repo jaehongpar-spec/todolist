@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="To-Do">
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<title>Daily To-Do</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f0f0e;
+  --s1:#1a1a18;
+  --s2:#222220;
+  --s3:#2a2a28;
+  --bd:#2e2e2b;
+  --bd2:#3a3a37;
+  --t1:#e8e6df;
+  --t2:#8a8880;
+  --t3:#4e4d49;
+  --ac:#c8f060;
+  --ac-dim:#8fb33a;
+  --ac-bg:#1a2408;
+  --red:#ff6b6b;
+  --red-bg:#2a1010;
+  --blue:#60a8f0;
+  --blue-bg:#0e1a2a;
+  --amb:#f0c060;
+  --amb-bg:#2a1e08;
+  --pur:#b09cf0;
+  --pur-bg:#1a1528;
+  --r:10px;
+  --rl:16px;
+  --st: env(safe-area-inset-top,0px);
+  --sb: env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow:hidden}
+
+.app{display:flex;flex-direction:column;height:100%;max-width:600px;margin:0 auto}
+
+/* header */
+.header{
+  padding:calc(var(--st) + 18px) 18px 0;
+  flex-shrink:0;
+}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{font-size:24px;font-weight:300;color:var(--t1);letter-spacing:-.03em;line-height:1}
+.logo em{color:var(--ac);font-style:normal;font-weight:500}
+.header-right{display:flex;align-items:center;gap:10px}
+.sync-wrap{display:flex;align-items:center;gap:6px}
+.sync-txt{font-size:11px;color:var(--t3);transition:color .3s}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);transition:background .3s,box-shadow .3s;flex-shrink:0}
+.sync-dot.live{background:var(--ac);box-shadow:0 0 8px var(--ac)}
+.sync-dot.busy{background:var(--amb);animation:blink .7s infinite}
+.sync-dot.err{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* tabs */
+.tabs{
+  display:flex;background:var(--s1);border-radius:var(--rl);
+  padding:3px;margin:0 18px 14px;flex-shrink:0;
+}
+.tab{
+  flex:1;height:34px;border:none;background:none;cursor:pointer;
+  font-size:13px;font-weight:400;color:var(--t3);
+  border-radius:calc(var(--rl) - 3px);font-family:inherit;
+  transition:background .2s,color .2s;
+}
+.tab.on{background:var(--s3);color:var(--t1);font-weight:500}
+
+/* views */
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;flex-direction:column;overflow:hidden}
+.view.on{display:flex}
+
+/* add form */
+.add-wrap{padding:0 18px 12px;flex-shrink:0}
+.add-box{background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px}
+.add-r1{display:flex;gap:8px;margin-bottom:8px}
+.add-input{
+  flex:1;height:38px;padding:0 12px;
+  background:var(--s2);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:14px;color:var(--t1);
+  outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;
+}
+.add-input:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(200,240,96,.1)}
+.add-input::placeholder{color:var(--t3)}
+.add-r2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.flbl{font-size:11px;color:var(--t3);white-space:nowrap}
+.date-in{
+  flex:1;min-width:120px;height:32px;padding:0 8px;
+  background:var(--s2);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:12px;color:var(--t1);
+  outline:none;font-family:inherit;color-scheme:dark;
+}
+.date-in:focus{border-color:var(--ac)}
+.tag-sel{
+  height:32px;padding:0 6px;
+  background:var(--s2);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:12px;color:var(--t1);
+  cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;
+}
+.add-btn{
+  height:32px;padding:0 16px;
+  background:var(--ac-bg);border:0.5px solid var(--ac-dim);
+  border-radius:var(--r);font-size:12px;color:var(--ac);
+  cursor:pointer;font-family:inherit;white-space:nowrap;
+  transition:background .15s;
+}
+.add-btn:hover,.add-btn:active{background:rgba(200,240,96,.18)}
+
+/* stats */
+.stats-wrap{padding:0 18px 10px;flex-shrink:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stat{
+  background:var(--s1);border:0.5px solid var(--bd);
+  border-radius:var(--r);padding:8px 10px;text-align:center;
+}
+.sv{font-size:22px;font-weight:300;color:var(--t1)}
+.sl{font-size:10px;color:var(--t3);margin-top:1px;letter-spacing:.03em}
+
+/* progress */
+.prog-wrap{padding:0 18px 10px;flex-shrink:0}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.prog-msg{font-size:12px;color:var(--t2)}
+.prog-pct{font-size:12px;font-weight:500;color:var(--ac)}
+.prog-bar{height:2px;background:var(--bd);border-radius:1px;overflow:hidden}
+.prog-fill{height:100%;background:var(--ac);border-radius:1px;transition:width .4s}
+
+/* scroll */
+.scroll{
+  flex:1;overflow-y:auto;padding:0 18px;
+  padding-bottom:calc(var(--sb) + 20px);
+  -webkit-overflow-scrolling:touch;
+}
+.sec-lbl{
+  font-size:10px;color:var(--t3);font-weight:500;
+  text-transform:uppercase;letter-spacing:.08em;
+  margin:12px 0 5px 2px;
+}
+.t-list{display:flex;flex-direction:column;gap:4px}
+
+/* todo item */
+.ti{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;
+  background:var(--s1);border:0.5px solid var(--bd);
+  border-radius:var(--r);transition:opacity .2s;
+}
+.ti.ov{border-left:2px solid var(--red)}
+.ti.td{border-left:2px solid var(--ac)}
+.ti.fu{border-left:2px solid var(--blue)}
+
+/* custom checkbox */
+.cb{
+  width:18px;height:18px;flex-shrink:0;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  border:1.5px solid var(--bd2);border-radius:5px;
+  background:var(--s2);position:relative;margin-top:1px;
+  transition:background .15s,border-color .15s;
+}
+.cb:checked{background:var(--ac);border-color:var(--ac)}
+.cb:checked::after{
+  content:'';position:absolute;
+  left:4px;top:1px;width:6px;height:10px;
+  border:2px solid var(--bg);border-top:none;border-left:none;
+  transform:rotate(45deg);
+}
+
+.tbody{flex:1;min-width:0}
+.ttxt{font-size:14px;color:var(--t1);line-height:1.45;word-break:break-all}
+.tmeta{display:flex;align-items:center;gap:4px;margin-top:4px;flex-wrap:wrap}
+.badge{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:500}
+.b-ov{background:var(--red-bg);color:var(--red)}
+.b-td{background:var(--ac-bg);color:var(--ac)}
+.b-fu{background:var(--blue-bg);color:var(--blue)}
+.tg-work{background:var(--blue-bg);color:var(--blue)}
+.tg-personal{background:var(--pur-bg);color:var(--pur)}
+.tg-study{background:var(--amb-bg);color:var(--amb)}
+.tg-health{background:var(--ac-bg);color:var(--ac)}
+
+.delbtn{
+  background:none;border:none;cursor:pointer;
+  font-size:18px;color:var(--t3);padding:0;line-height:1;
+  opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;
+}
+.ti:hover .delbtn,.di:hover .delbtn{opacity:.6}
+.delbtn:hover{color:var(--red);opacity:1!important}
+
+.empty{
+  text-align:center;padding:3rem 1rem;font-size:13px;color:var(--t3);
+  border:0.5px dashed var(--bd2);border-radius:var(--rl);
+  margin-top:4px;line-height:1.9;
+}
+
+/* done item */
+.di{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;
+  background:var(--s1);border:0.5px solid var(--bd);
+  border-radius:var(--r);opacity:.45;
+}
+.di .ttxt{text-decoration:line-through;color:var(--t3)}
+.undo{
+  background:none;border:0.5px solid var(--bd2);border-radius:5px;
+  cursor:pointer;font-size:10px;color:var(--t2);padding:3px 7px;
+  white-space:nowrap;flex-shrink:0;margin-top:1px;
+  font-family:inherit;transition:background .15s;
+}
+.undo:hover,.undo:active{background:var(--s2)}
+.clear-btn{
+  width:100%;height:36px;margin-top:12px;
+  background:none;border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:12px;color:var(--red);
+  cursor:pointer;font-family:inherit;transition:background .15s;
+}
+.clear-btn:hover,.clear-btn:active{background:var(--red-bg)}
+
+::-webkit-scrollbar{width:0}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">daily <em>to‑do</em></div>
+      <div class="header-right">
+        <div class="sync-wrap">
+          <span class="sync-txt" id="sync-txt">연결 중...</span>
+          <span class="sync-dot" id="sync-dot"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" id="tab-todo" onclick="switchTab('todo')">할 일</button>
+    <button class="tab" id="tab-done" onclick="switchTab('done')">완료</button>
+  </div>
+
+  <div class="content">
+
+    <!-- 할 일 뷰 -->
+    <div class="view on" id="view-todo">
+      <div class="add-wrap">
+        <div class="add-box">
+          <div class="add-r1">
+            <input class="add-input" type="text" id="new-task"
+              placeholder="새 할 일 입력 후 Enter…"
+              onkeydown="if(event.key==='Enter')addTask()">
+          </div>
+          <div class="add-r2">
+            <span class="flbl">날짜</span>
+            <input class="date-in" type="date" id="new-date">
+            <select class="tag-sel" id="new-tag">
+              <option value="work">업무</option>
+              <option value="personal">개인</option>
+              <option value="study">공부</option>
+              <option value="health">건강</option>
+            </select>
+            <button class="add-btn" onclick="addTask()">+ 추가</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-wrap">
+        <div class="stats">
+          <div class="stat"><div class="sv" id="s-pend">0</div><div class="sl">미완료</div></div>
+          <div class="stat"><div class="sv" id="s-over" style="color:var(--red)">0</div><div class="sl">기한지남</div></div>
+          <div class="stat"><div class="sv" id="s-tod" style="color:var(--ac)">0</div><div class="sl">오늘</div></div>
+        </div>
+      </div>
+
+      <div class="prog-wrap">
+        <div class="prog-top">
+          <span class="prog-msg" id="prog-msg">할 일을 추가해보세요</span>
+          <span class="prog-pct" id="prog-pct"></span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="scroll" id="todo-scroll">
+        <div id="todo-con"></div>
+      </div>
+    </div>
+
+    <!-- 완료 뷰 -->
+    <div class="view" id="view-done">
+      <div class="scroll">
+        <div class="t-list" id="done-list"></div>
+        <button class="clear-btn" id="clear-btn" onclick="clearDone()" style="display:none">완료 항목 모두 삭제</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const TAGS={
+  work:{label:'업무',cls:'tg-work'},
+  personal:{label:'개인',cls:'tg-personal'},
+  study:{label:'공부',cls:'tg-study'},
+  health:{label:'건강',cls:'tg-health'}
+}
+
+let todos=[], ws=null, syncTimer=null
+
+function todayStr(){
+  const d=new Date()
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+}
+
+function dateMeta(str){
+  if(!str)return null
+  const diff=Math.round((new Date(str+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000)
+  if(diff<0) return{label:Math.abs(diff)+'일 지남',cls:'b-ov',type:'ov'}
+  if(diff===0)return{label:'오늘',cls:'b-td',type:'td'}
+  if(diff===1)return{label:'내일',cls:'b-fu',type:'fu'}
+  const d=new Date(str+'T00:00:00')
+  return{label:`${d.getMonth()+1}/${d.getDate()}`,cls:'b-fu',type:'fu'}
+}
+
+/* ── WebSocket ── */
+function connect(){
+  const proto=location.protocol==='https:'?'wss':'ws'
+  const url=`${proto}://${location.host}`
+  setSync('busy','연결 중...')
+  try{ ws=new WebSocket(url) }catch(e){ setTimeout(connect,3000);return }
+
+  ws.onopen=()=>setSync('live','연결됨')
+  ws.onmessage=e=>{
+    try{
+      const m=JSON.parse(e.data)
+      if(m.type==='sync'&&Array.isArray(m.todos)){
+        todos=m.todos
+        renderTodo()
+        renderDone()
+        setSync('live','연결됨')
+      }
+    }catch(_){}
+  }
+  ws.onclose=()=>{ setSync('err','연결 끊김'); setTimeout(connect,3000) }
+  ws.onerror=()=>setSync('err','오류')
+}
+
+function setSync(state,txt){
+  const dot=document.getElementById('sync-dot')
+  const lbl=document.getElementById('sync-txt')
+  dot.className='sync-dot '+state
+  lbl.textContent=txt
+  lbl.style.color=state==='live'?'var(--ac)':state==='busy'?'var(--amb)':'var(--red)'
+}
+
+function pushSync(){
+  clearTimeout(syncTimer)
+  syncTimer=setTimeout(()=>{
+    if(ws&&ws.readyState===1){
+      setSync('busy','동기화 중...')
+      ws.send(JSON.stringify({type:'sync',todos}))
+    }
+  },300)
+}
+
+/* ── 데이터 ── */
+function addTask(){
+  const inp=document.getElementById('new-task')
+  const text=inp.value.trim()
+  if(!text)return
+  const date=document.getElementById('new-date').value||null
+  const tag=document.getElementById('new-tag').value
+  todos.push({id:Date.now(),text,date,tag,done:false})
+  inp.value=''; inp.focus()
+  pushSync(); renderTodo()
+}
+
+function toggleDone(id){
+  const t=todos.find(t=>t.id===id)
+  if(t){t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null}
+  pushSync(); renderTodo()
+}
+
+function undoDone(id){
+  const t=todos.find(t=>t.id===id)
+  if(t){t.done=false;t.doneAt=null}
+  pushSync(); renderTodo(); renderDone()
+}
+
+function deleteTodo(id){
+  todos=todos.filter(t=>t.id!==id)
+  pushSync(); renderTodo()
+}
+
+function deleteDone(id){
+  todos=todos.filter(t=>t.id!==id)
+  pushSync(); renderDone()
+}
+
+function clearDone(){
+  if(!confirm('완료 항목을 모두 삭제할까요?'))return
+  todos=todos.filter(t=>!t.done)
+  pushSync(); renderDone()
+}
+
+/* ── 렌더 ── */
+function makeItem(t){
+  const div=document.createElement('div')
+  const dm=dateMeta(t.date)
+  div.className='ti '+(dm?dm.type:'')
+  const ti=TAGS[t.tag]||TAGS.personal
+  const esc=t.text.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  const db=dm?`<span class="badge ${dm.cls}">${dm.label}</span>`:''
+  div.innerHTML=`
+    <input type="checkbox" class="cb" onchange="toggleDone(${t.id})">
+    <div class="tbody">
+      <div class="ttxt">${esc}</div>
+      <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
+    </div>
+    <button class="delbtn" onclick="deleteTodo(${t.id})">×</button>`
+  return div
+}
+
+function makeDoneItem(t){
+  const div=document.createElement('div')
+  div.className='di'
+  const ti=TAGS[t.tag]||TAGS.personal
+  const esc=t.text.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  const dm=dateMeta(t.date)
+  const db=dm?`<span class="badge ${dm.cls}">${dm.label}</span>`:''
+  div.innerHTML=`
+    <div class="tbody">
+      <div class="ttxt">${esc}</div>
+      <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
+    </div>
+    <button class="undo" onclick="undoDone(${t.id})">되돌리기</button>
+    <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.4">×</button>`
+  return div
+}
+
+function renderTodo(){
+  const today=todayStr()
+  const pend=todos.filter(t=>!t.done)
+  const ov=pend.filter(t=>t.date&&t.date<today).sort((a,b)=>a.date.localeCompare(b.date))
+  const td=pend.filter(t=>t.date===today)
+  const fu=pend.filter(t=>t.date&&t.date>today).sort((a,b)=>a.date.localeCompare(b.date))
+  const nd=pend.filter(t=>!t.date)
+
+  const total=todos.length, dc=todos.filter(t=>t.done).length
+  const pct=total?Math.round(dc/total*100):0
+
+  document.getElementById('s-pend').textContent=pend.length
+  document.getElementById('s-over').textContent=ov.length
+  document.getElementById('s-tod').textContent=td.length
+  document.getElementById('prog-fill').style.width=pct+'%'
+  document.getElementById('prog-pct').textContent=total?pct+'%':''
+  document.getElementById('prog-msg').textContent=
+    total===0?'할 일을 추가해보세요':
+    pend.length===0?'모두 완료했어요! 🎉':
+    `${pend.length}개 남음`
+
+  const c=document.getElementById('todo-con')
+  c.innerHTML=''
+  if(!pend.length){c.innerHTML='<div class="empty">미완료 항목이 없습니다</div>';return}
+
+  function sec(label,items){
+    if(!items.length)return
+    const l=document.createElement('div');l.className='sec-lbl';l.textContent=label;c.appendChild(l)
+    const w=document.createElement('div');w.className='t-list'
+    items.forEach(t=>w.appendChild(makeItem(t)));c.appendChild(w)
+  }
+  sec('기한 지남',ov);sec('오늘',td);sec('예정',fu);sec('날짜 없음',nd)
+}
+
+function renderDone(){
+  const done=todos.filter(t=>t.done).sort((a,b)=>(b.doneAt||'').localeCompare(a.doneAt||''))
+  const list=document.getElementById('done-list')
+  const btn=document.getElementById('clear-btn')
+  list.innerHTML=''
+  btn.style.display=done.length?'':'none'
+  if(!done.length){list.innerHTML='<div class="empty">완료된 항목이 없습니다</div>';return}
+  done.forEach(t=>list.appendChild(makeDoneItem(t)))
+}
+
+function switchTab(tab){
+  document.getElementById('view-todo').classList.toggle('on',tab==='todo')
+  document.getElementById('view-done').classList.toggle('on',tab==='done')
+  document.getElementById('tab-todo').classList.toggle('on',tab==='todo')
+  document.getElementById('tab-done').classList.toggle('on',tab==='done')
+  if(tab==='done')renderDone()
+}
+
+/* ── 초기화 ── */
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{})
+document.getElementById('new-date').value=todayStr()
+connect()
+</script>
+</body>
+</html>
