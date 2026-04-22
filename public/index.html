@@ -19,9 +19,9 @@
   --s3:#2a2a28;
   --bd:#2e2e2b;
   --bd2:#3a3a37;
-  --t1:#e8e6df;
-  --t2:#8a8880;
-  --t3:#4e4d49;
+  --t1:#f0ede6;
+  --t2:#b0ada5;
+  --t3:#7a7870;
   --ac:#c8f060;
   --ac-dim:#8fb33a;
   --ac-bg:#1a2408;
@@ -191,6 +191,66 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .ti:hover .delbtn,.di:hover .delbtn{opacity:.6}
 .delbtn:hover{color:var(--red);opacity:1!important}
 
+.item-actions{
+  display:flex;align-items:center;gap:4px;flex-shrink:0;
+}
+.editbtn{
+  background:none;border:none;cursor:pointer;
+  font-size:14px;color:var(--t3);padding:0 2px;line-height:1;
+  opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;
+}
+.ti:hover .editbtn,.di:hover .editbtn{opacity:.6}
+.editbtn:hover{color:var(--blue);opacity:1!important}
+
+/* 수정 모달 */
+.modal-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:100;align-items:center;justify-content:center;
+}
+.modal-bg.on{display:flex}
+.modal{
+  background:var(--s2);border:0.5px solid var(--bd2);
+  border-radius:var(--rl);padding:20px;width:calc(100% - 40px);max-width:420px;
+}
+.modal-title{font-size:14px;font-weight:500;color:var(--t1);margin-bottom:14px}
+.modal-input{
+  width:100%;height:40px;padding:0 12px;
+  background:var(--s1);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:14px;color:var(--t1);
+  outline:none;font-family:inherit;margin-bottom:10px;
+  transition:border-color .15s;
+}
+.modal-input:focus{border-color:var(--ac)}
+.modal-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+.modal-date{
+  flex:1;height:36px;padding:0 8px;
+  background:var(--s1);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:13px;color:var(--t1);
+  outline:none;font-family:inherit;color-scheme:dark;
+}
+.modal-date:focus{border-color:var(--ac)}
+.modal-sel{
+  height:36px;padding:0 8px;
+  background:var(--s1);border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:13px;color:var(--t1);
+  cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;
+}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-cancel{
+  height:34px;padding:0 14px;
+  background:none;border:0.5px solid var(--bd2);
+  border-radius:var(--r);font-size:13px;color:var(--t2);
+  cursor:pointer;font-family:inherit;transition:background .15s;
+}
+.modal-cancel:hover{background:var(--s3)}
+.modal-save{
+  height:34px;padding:0 14px;
+  background:var(--ac-bg);border:0.5px solid var(--ac-dim);
+  border-radius:var(--r);font-size:13px;color:var(--ac);
+  cursor:pointer;font-family:inherit;transition:background .15s;
+}
+.modal-save:hover{background:rgba(200,240,96,.18)}
+
 .empty{
   text-align:center;padding:3rem 1rem;font-size:13px;color:var(--t3);
   border:0.5px dashed var(--bd2);border-radius:var(--rl);
@@ -202,9 +262,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   display:flex;align-items:flex-start;gap:10px;
   padding:10px 12px;
   background:var(--s1);border:0.5px solid var(--bd);
-  border-radius:var(--r);opacity:.45;
+  border-radius:var(--r);
 }
-.di .ttxt{text-decoration:line-through;color:var(--t3)}
+.di .ttxt{text-decoration:line-through;color:var(--t2)}
 .undo{
   background:none;border:0.5px solid var(--bd2);border-radius:5px;
   cursor:pointer;font-size:10px;color:var(--t2);padding:3px 7px;
@@ -300,6 +360,27 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   </div>
 </div>
 
+<!-- 수정 모달 -->
+<div class="modal-bg" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">업무 수정</div>
+    <input class="modal-input" type="text" id="edit-text" placeholder="업무 내용">
+    <div class="modal-row">
+      <input class="modal-date" type="date" id="edit-date">
+      <select class="modal-sel" id="edit-tag">
+        <option value="work">업무</option>
+        <option value="personal">개인</option>
+        <option value="study">공부</option>
+        <option value="health">건강</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEdit()">취소</button>
+      <button class="modal-save" onclick="saveEdit()">저장</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const TAGS={
   work:{label:'업무',cls:'tg-work'},
@@ -308,7 +389,46 @@ const TAGS={
   health:{label:'건강',cls:'tg-health'}
 }
 
-let todos=[], ws=null, syncTimer=null
+let editingId=null
+
+function openEdit(id){
+  const t=todos.find(t=>t.id===id)
+  if(!t)return
+  editingId=id
+  document.getElementById('edit-text').value=t.text
+  document.getElementById('edit-date').value=t.date||''
+  document.getElementById('edit-tag').value=t.tag||'personal'
+  document.getElementById('edit-modal').classList.add('on')
+  setTimeout(()=>document.getElementById('edit-text').focus(),50)
+}
+
+function closeEdit(){
+  editingId=null
+  document.getElementById('edit-modal').classList.remove('on')
+}
+
+function saveEdit(){
+  if(!editingId)return
+  const t=todos.find(t=>t.id===editingId)
+  if(t){
+    t.text=document.getElementById('edit-text').value.trim()||t.text
+    t.date=document.getElementById('edit-date').value||null
+    t.tag=document.getElementById('edit-tag').value
+  }
+  closeEdit()
+  pushSync(); renderTodo(); renderDone()
+}
+
+document.getElementById('edit-modal').addEventListener('click',function(e){
+  if(e.target===this)closeEdit()
+})
+
+document.getElementById('edit-text').addEventListener('keydown',function(e){
+  if(e.key==='Enter')saveEdit()
+  if(e.key==='Escape')closeEdit()
+})
+
+
 
 function todayStr(){
   const d=new Date()
@@ -420,7 +540,10 @@ function makeItem(t){
       <div class="ttxt">${esc}</div>
       <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
     </div>
-    <button class="delbtn" onclick="deleteTodo(${t.id})">×</button>`
+    <div class="item-actions">
+      <button class="editbtn" onclick="openEdit(${t.id})" title="수정">✎</button>
+      <button class="delbtn" onclick="deleteTodo(${t.id})">×</button>
+    </div>`
   return div
 }
 
@@ -437,7 +560,10 @@ function makeDoneItem(t){
       <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
     </div>
     <button class="undo" onclick="undoDone(${t.id})">되돌리기</button>
-    <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.4">×</button>`
+    <div class="item-actions">
+      <button class="editbtn" onclick="openEdit(${t.id})" title="수정">✎</button>
+      <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.4">×</button>
+    </div>`
   return div
 }
 
