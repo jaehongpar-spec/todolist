@@ -20,7 +20,7 @@
   --bd:#2e2e2b;
   --bd2:#3a3a37;
   --t1:#f0ede6;
-  --t2:#b0ada5;
+  --t2:#b8b5ae;
   --t3:#7a7870;
   --ac:#c8f060;
   --ac-dim:#8fb33a;
@@ -42,11 +42,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 
 .app{display:flex;flex-direction:column;height:100%;max-width:600px;margin:0 auto}
 
-/* header */
-.header{
-  padding:calc(var(--st) + 18px) 18px 0;
-  flex-shrink:0;
-}
+.header{padding:calc(var(--st) + 18px) 18px 0;flex-shrink:0;}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .logo{font-size:24px;font-weight:300;color:var(--t1);letter-spacing:-.03em;line-height:1}
 .logo em{color:var(--ac);font-style:normal;font-weight:500}
@@ -59,71 +55,34 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .sync-dot.err{background:var(--red)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* tabs */
-.tabs{
-  display:flex;background:var(--s1);border-radius:var(--rl);
-  padding:3px;margin:0 18px 14px;flex-shrink:0;
-}
-.tab{
-  flex:1;height:34px;border:none;background:none;cursor:pointer;
-  font-size:13px;font-weight:400;color:var(--t3);
-  border-radius:calc(var(--rl) - 3px);font-family:inherit;
-  transition:background .2s,color .2s;
-}
+.tabs{display:flex;background:var(--s1);border-radius:var(--rl);padding:3px;margin:0 18px 14px;flex-shrink:0;}
+.tab{flex:1;height:34px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:400;color:var(--t3);border-radius:calc(var(--rl) - 3px);font-family:inherit;transition:background .2s,color .2s;}
 .tab.on{background:var(--s3);color:var(--t1);font-weight:500}
 
-/* views */
 .content{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .view{display:none;flex:1;flex-direction:column;overflow:hidden}
 .view.on{display:flex}
 
-/* add form */
 .add-wrap{padding:0 18px 12px;flex-shrink:0}
 .add-box{background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px}
 .add-r1{display:flex;gap:8px;margin-bottom:8px}
-.add-input{
-  flex:1;height:38px;padding:0 12px;
-  background:var(--s2);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:14px;color:var(--t1);
-  outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;
-}
+.add-input{flex:1;height:38px;padding:0 12px;background:var(--s2);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:14px;color:var(--t1);outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;}
 .add-input:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(200,240,96,.1)}
 .add-input::placeholder{color:var(--t3)}
 .add-r2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .flbl{font-size:11px;color:var(--t3);white-space:nowrap}
-.date-in{
-  flex:1;min-width:120px;height:32px;padding:0 8px;
-  background:var(--s2);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:12px;color:var(--t1);
-  outline:none;font-family:inherit;color-scheme:dark;
-}
+.date-in{flex:1;min-width:120px;height:32px;padding:0 8px;background:var(--s2);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:12px;color:var(--t1);outline:none;font-family:inherit;color-scheme:dark;}
 .date-in:focus{border-color:var(--ac)}
-.tag-sel{
-  height:32px;padding:0 6px;
-  background:var(--s2);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:12px;color:var(--t1);
-  cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;
-}
-.add-btn{
-  height:32px;padding:0 16px;
-  background:var(--ac-bg);border:0.5px solid var(--ac-dim);
-  border-radius:var(--r);font-size:12px;color:var(--ac);
-  cursor:pointer;font-family:inherit;white-space:nowrap;
-  transition:background .15s;
-}
+.tag-sel{height:32px;padding:0 6px;background:var(--s2);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:12px;color:var(--t1);cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;}
+.add-btn{height:32px;padding:0 16px;background:var(--ac-bg);border:0.5px solid var(--ac-dim);border-radius:var(--r);font-size:12px;color:var(--ac);cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;}
 .add-btn:hover,.add-btn:active{background:rgba(200,240,96,.18)}
 
-/* stats */
 .stats-wrap{padding:0 18px 10px;flex-shrink:0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.stat{
-  background:var(--s1);border:0.5px solid var(--bd);
-  border-radius:var(--r);padding:8px 10px;text-align:center;
-}
+.stat{background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--r);padding:8px 10px;text-align:center;}
 .sv{font-size:22px;font-weight:300;color:var(--t1)}
 .sl{font-size:10px;color:var(--t3);margin-top:1px;letter-spacing:.03em}
 
-/* progress */
 .prog-wrap{padding:0 18px 10px;flex-shrink:0}
 .prog-top{display:flex;justify-content:space-between;margin-bottom:5px}
 .prog-msg{font-size:12px;color:var(--t2)}
@@ -131,45 +90,19 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .prog-bar{height:2px;background:var(--bd);border-radius:1px;overflow:hidden}
 .prog-fill{height:100%;background:var(--ac);border-radius:1px;transition:width .4s}
 
-/* scroll */
-.scroll{
-  flex:1;overflow-y:auto;padding:0 18px;
-  padding-bottom:calc(var(--sb) + 20px);
-  -webkit-overflow-scrolling:touch;
-}
-.sec-lbl{
-  font-size:10px;color:var(--t3);font-weight:500;
-  text-transform:uppercase;letter-spacing:.08em;
-  margin:12px 0 5px 2px;
-}
+.scroll{flex:1;overflow-y:auto;padding:0 18px;padding-bottom:calc(var(--sb) + 20px);-webkit-overflow-scrolling:touch;}
+.sec-lbl{font-size:10px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 5px 2px;}
 .t-list{display:flex;flex-direction:column;gap:4px}
 
-/* todo item */
-.ti{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 12px;
-  background:var(--s1);border:0.5px solid var(--bd);
-  border-radius:var(--r);transition:opacity .2s;
-}
+/* 할 일 아이템 */
+.ti{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--r);}
 .ti.ov{border-left:2px solid var(--red)}
 .ti.td{border-left:2px solid var(--ac)}
 .ti.fu{border-left:2px solid var(--blue)}
 
-/* custom checkbox */
-.cb{
-  width:18px;height:18px;flex-shrink:0;cursor:pointer;
-  appearance:none;-webkit-appearance:none;
-  border:1.5px solid var(--bd2);border-radius:5px;
-  background:var(--s2);position:relative;margin-top:1px;
-  transition:background .15s,border-color .15s;
-}
+.cb{width:18px;height:18px;flex-shrink:0;cursor:pointer;appearance:none;-webkit-appearance:none;border:1.5px solid var(--bd2);border-radius:5px;background:var(--s2);position:relative;transition:background .15s,border-color .15s;}
 .cb:checked{background:var(--ac);border-color:var(--ac)}
-.cb:checked::after{
-  content:'';position:absolute;
-  left:4px;top:1px;width:6px;height:10px;
-  border:2px solid var(--bg);border-top:none;border-left:none;
-  transform:rotate(45deg);
-}
+.cb:checked::after{content:'';position:absolute;left:4px;top:1px;width:6px;height:10px;border:2px solid var(--bg);border-top:none;border-left:none;transform:rotate(45deg);}
 
 .tbody{flex:1;min-width:0}
 .ttxt{font-size:14px;color:var(--t1);line-height:1.45;word-break:break-all}
@@ -183,103 +116,51 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .tg-study{background:var(--amb-bg);color:var(--amb)}
 .tg-health{background:var(--ac-bg);color:var(--ac)}
 
-.delbtn{
-  background:none;border:none;cursor:pointer;
-  font-size:18px;color:var(--t3);padding:0;line-height:1;
-  opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;
-}
-.ti:hover .delbtn,.di:hover .delbtn{opacity:.7}
-.delbtn:hover{color:var(--red);opacity:1!important}
-
-.item-actions{
-  display:flex;align-items:center;gap:6px;flex-shrink:0;
-}
-.editbtn{
+/* 액션 버튼 - 항상 표시 */
+.item-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.edit-btn{
   background:none;border:0.5px solid var(--bd2);border-radius:5px;
-  cursor:pointer;font-size:11px;color:var(--t2);padding:3px 8px;
-  white-space:nowrap;flex-shrink:0;
-  font-family:inherit;transition:background .15s,color .15s;
+  cursor:pointer;font-size:11px;color:var(--t2);padding:4px 8px;
+  white-space:nowrap;font-family:inherit;
+  transition:background .15s,color .15s,border-color .15s;
 }
-.editbtn:hover,.editbtn:active{background:var(--s3);color:var(--blue)}
+.edit-btn:hover,.edit-btn:active{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
+.del-btn{
+  background:none;border:0.5px solid var(--bd2);border-radius:5px;
+  cursor:pointer;font-size:11px;color:var(--t3);padding:4px 8px;
+  white-space:nowrap;font-family:inherit;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.del-btn:hover,.del-btn:active{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+
+.empty{text-align:center;padding:3rem 1rem;font-size:13px;color:var(--t3);border:0.5px dashed var(--bd2);border-radius:var(--rl);margin-top:4px;line-height:1.9;}
+
+/* 완료 아이템 - opacity 제거, 글씨 밝게 */
+.di{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--r);}
+.di .ttxt{font-size:14px;color:var(--t1);text-decoration:line-through;line-height:1.45;word-break:break-all}
+.di .tmeta .badge{opacity:.85}
+.undo{background:none;border:0.5px solid var(--bd2);border-radius:5px;cursor:pointer;font-size:11px;color:var(--t2);padding:4px 8px;white-space:nowrap;flex-shrink:0;font-family:inherit;transition:background .15s;}
+.undo:hover,.undo:active{background:var(--s2)}
+
+.clear-btn{width:100%;height:36px;margin-top:12px;background:none;border:0.5px solid var(--bd2);border-radius:var(--r);font-size:12px;color:var(--red);cursor:pointer;font-family:inherit;transition:background .15s;}
+.clear-btn:hover,.clear-btn:active{background:var(--red-bg)}
 
 /* 수정 모달 */
-.modal-bg{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
-  z-index:100;align-items:center;justify-content:center;
-}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px;}
 .modal-bg.on{display:flex}
-.modal{
-  background:var(--s2);border:0.5px solid var(--bd2);
-  border-radius:var(--rl);padding:20px;width:calc(100% - 40px);max-width:420px;
-}
-.modal-title{font-size:14px;font-weight:500;color:var(--t1);margin-bottom:14px}
-.modal-input{
-  width:100%;height:40px;padding:0 12px;
-  background:var(--s1);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:14px;color:var(--t1);
-  outline:none;font-family:inherit;margin-bottom:10px;
-  transition:border-color .15s;
-}
+.modal{background:var(--s2);border:0.5px solid var(--bd2);border-radius:var(--rl);padding:20px;width:100%;max-width:420px;}
+.modal-title{font-size:15px;font-weight:500;color:var(--t1);margin-bottom:14px}
+.modal-input{width:100%;height:42px;padding:0 12px;background:var(--s1);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:14px;color:var(--t1);outline:none;font-family:inherit;margin-bottom:10px;transition:border-color .15s;}
 .modal-input:focus{border-color:var(--ac)}
-.modal-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
-.modal-date{
-  flex:1;height:36px;padding:0 8px;
-  background:var(--s1);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:13px;color:var(--t1);
-  outline:none;font-family:inherit;color-scheme:dark;
-}
+.modal-row{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.modal-date{flex:1;height:36px;padding:0 8px;background:var(--s1);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:13px;color:var(--t1);outline:none;font-family:inherit;color-scheme:dark;}
 .modal-date:focus{border-color:var(--ac)}
-.modal-sel{
-  height:36px;padding:0 8px;
-  background:var(--s1);border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:13px;color:var(--t1);
-  cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;
-}
+.modal-sel{height:36px;padding:0 8px;background:var(--s1);border:0.5px solid var(--bd2);border-radius:var(--r);font-size:13px;color:var(--t1);cursor:pointer;outline:none;font-family:inherit;color-scheme:dark;}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
-.modal-cancel{
-  height:34px;padding:0 14px;
-  background:none;border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:13px;color:var(--t2);
-  cursor:pointer;font-family:inherit;transition:background .15s;
-}
+.modal-cancel{height:36px;padding:0 16px;background:none;border:0.5px solid var(--bd2);border-radius:var(--r);font-size:13px;color:var(--t2);cursor:pointer;font-family:inherit;transition:background .15s;}
 .modal-cancel:hover{background:var(--s3)}
-.modal-save{
-  height:34px;padding:0 14px;
-  background:var(--ac-bg);border:0.5px solid var(--ac-dim);
-  border-radius:var(--r);font-size:13px;color:var(--ac);
-  cursor:pointer;font-family:inherit;transition:background .15s;
-}
+.modal-save{height:36px;padding:0 16px;background:var(--ac-bg);border:0.5px solid var(--ac-dim);border-radius:var(--r);font-size:13px;color:var(--ac);cursor:pointer;font-family:inherit;transition:background .15s;}
 .modal-save:hover{background:rgba(200,240,96,.18)}
-
-.empty{
-  text-align:center;padding:3rem 1rem;font-size:13px;color:var(--t3);
-  border:0.5px dashed var(--bd2);border-radius:var(--rl);
-  margin-top:4px;line-height:1.9;
-}
-
-/* done item */
-.di{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 12px;
-  background:var(--s1);border:0.5px solid var(--bd);
-  border-radius:var(--r);
-}
-.di .ttxt{text-decoration:line-through;color:var(--t1);opacity:.75}
-.di .tmeta .badge{opacity:.8}
-.undo{
-  background:none;border:0.5px solid var(--bd2);border-radius:5px;
-  cursor:pointer;font-size:10px;color:var(--t2);padding:3px 7px;
-  white-space:nowrap;flex-shrink:0;margin-top:1px;
-  font-family:inherit;transition:background .15s;
-}
-.undo:hover,.undo:active{background:var(--s2)}
-.clear-btn{
-  width:100%;height:36px;margin-top:12px;
-  background:none;border:0.5px solid var(--bd2);
-  border-radius:var(--r);font-size:12px;color:var(--red);
-  cursor:pointer;font-family:inherit;transition:background .15s;
-}
-.clear-btn:hover,.clear-btn:active{background:var(--red-bg)}
 
 ::-webkit-scrollbar{width:0}
 </style>
@@ -362,10 +243,11 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 </div>
 
 <!-- 수정 모달 -->
-<div class="modal-bg" id="edit-modal">
+<div class="modal-bg" id="edit-modal" onclick="if(event.target===this)closeEdit()">
   <div class="modal">
     <div class="modal-title">업무 수정</div>
-    <input class="modal-input" type="text" id="edit-text" placeholder="업무 내용">
+    <input class="modal-input" type="text" id="edit-text" placeholder="업무 내용"
+      onkeydown="if(event.key==='Enter')saveEdit();if(event.key==='Escape')closeEdit()">
     <div class="modal-row">
       <input class="modal-date" type="date" id="edit-date">
       <select class="modal-sel" id="edit-tag">
@@ -390,46 +272,7 @@ const TAGS={
   health:{label:'건강',cls:'tg-health'}
 }
 
-let editingId=null
-
-function openEdit(id){
-  const t=todos.find(t=>t.id===id)
-  if(!t)return
-  editingId=id
-  document.getElementById('edit-text').value=t.text
-  document.getElementById('edit-date').value=t.date||''
-  document.getElementById('edit-tag').value=t.tag||'personal'
-  document.getElementById('edit-modal').classList.add('on')
-  setTimeout(()=>document.getElementById('edit-text').focus(),50)
-}
-
-function closeEdit(){
-  editingId=null
-  document.getElementById('edit-modal').classList.remove('on')
-}
-
-function saveEdit(){
-  if(!editingId)return
-  const t=todos.find(t=>t.id===editingId)
-  if(t){
-    t.text=document.getElementById('edit-text').value.trim()||t.text
-    t.date=document.getElementById('edit-date').value||null
-    t.tag=document.getElementById('edit-tag').value
-  }
-  closeEdit()
-  pushSync(); renderTodo(); renderDone()
-}
-
-document.getElementById('edit-modal').addEventListener('click',function(e){
-  if(e.target===this)closeEdit()
-})
-
-document.getElementById('edit-text').addEventListener('keydown',function(e){
-  if(e.key==='Enter')saveEdit()
-  if(e.key==='Escape')closeEdit()
-})
-
-
+let todos=[], ws=null, syncTimer=null, editingId=null
 
 function todayStr(){
   const d=new Date()
@@ -446,22 +289,17 @@ function dateMeta(str){
   return{label:`${d.getMonth()+1}/${d.getDate()}`,cls:'b-fu',type:'fu'}
 }
 
-/* ── WebSocket ── */
 function connect(){
   const proto=location.protocol==='https:'?'wss':'ws'
   const url=`${proto}://${location.host}`
   setSync('busy','연결 중...')
   try{ ws=new WebSocket(url) }catch(e){ setTimeout(connect,3000);return }
-
   ws.onopen=()=>setSync('live','연결됨')
   ws.onmessage=e=>{
     try{
       const m=JSON.parse(e.data)
       if(m.type==='sync'&&Array.isArray(m.todos)){
-        todos=m.todos
-        renderTodo()
-        renderDone()
-        setSync('live','연결됨')
+        todos=m.todos; renderTodo(); renderDone(); setSync('live','연결됨')
       }
     }catch(_){}
   }
@@ -487,7 +325,6 @@ function pushSync(){
   },300)
 }
 
-/* ── 데이터 ── */
 function addTask(){
   const inp=document.getElementById('new-task')
   const text=inp.value.trim()
@@ -512,11 +349,13 @@ function undoDone(id){
 }
 
 function deleteTodo(id){
+  if(!confirm('삭제할까요?'))return
   todos=todos.filter(t=>t.id!==id)
   pushSync(); renderTodo()
 }
 
 function deleteDone(id){
+  if(!confirm('삭제할까요?'))return
   todos=todos.filter(t=>t.id!==id)
   pushSync(); renderDone()
 }
@@ -527,7 +366,35 @@ function clearDone(){
   pushSync(); renderDone()
 }
 
-/* ── 렌더 ── */
+function openEdit(id){
+  const t=todos.find(t=>t.id===id)
+  if(!t)return
+  editingId=id
+  document.getElementById('edit-text').value=t.text
+  document.getElementById('edit-date').value=t.date||''
+  document.getElementById('edit-tag').value=t.tag||'personal'
+  document.getElementById('edit-modal').classList.add('on')
+  setTimeout(()=>document.getElementById('edit-text').focus(),50)
+}
+
+function closeEdit(){
+  editingId=null
+  document.getElementById('edit-modal').classList.remove('on')
+}
+
+function saveEdit(){
+  if(!editingId)return
+  const t=todos.find(t=>t.id===editingId)
+  if(t){
+    const txt=document.getElementById('edit-text').value.trim()
+    if(txt)t.text=txt
+    t.date=document.getElementById('edit-date').value||null
+    t.tag=document.getElementById('edit-tag').value
+  }
+  closeEdit()
+  pushSync(); renderTodo(); renderDone()
+}
+
 function makeItem(t){
   const div=document.createElement('div')
   const dm=dateMeta(t.date)
@@ -542,8 +409,8 @@ function makeItem(t){
       <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
     </div>
     <div class="item-actions">
-      <button class="editbtn" onclick="openEdit(${t.id})">수정</button>
-      <button class="delbtn" onclick="deleteTodo(${t.id})">×</button>
+      <button class="edit-btn" onclick="openEdit(${t.id})">수정</button>
+      <button class="del-btn" onclick="deleteTodo(${t.id})">삭제</button>
     </div>`
   return div
 }
@@ -560,10 +427,10 @@ function makeDoneItem(t){
       <div class="ttxt">${esc}</div>
       <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
     </div>
-    <button class="undo" onclick="undoDone(${t.id})">되돌리기</button>
     <div class="item-actions">
-      <button class="editbtn" onclick="openEdit(${t.id})">수정</button>
-      <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.6">×</button>
+      <button class="undo" onclick="undoDone(${t.id})">되돌리기</button>
+      <button class="edit-btn" onclick="openEdit(${t.id})">수정</button>
+      <button class="del-btn" onclick="deleteDone(${t.id})">삭제</button>
     </div>`
   return div
 }
@@ -620,7 +487,6 @@ function switchTab(tab){
   if(tab==='done')renderDone()
 }
 
-/* ── 초기화 ── */
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{})
 document.getElementById('new-date').value=todayStr()
 connect()
