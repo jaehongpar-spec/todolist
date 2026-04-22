@@ -95,10 +95,27 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .t-list{display:flex;flex-direction:column;gap:4px}
 
 /* 할 일 아이템 */
-.ti{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--r);}
+.ti{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--s1);border:0.5px solid var(--bd);
+  border-radius:var(--r);transition:box-shadow .15s,opacity .15s;
+  cursor:default;
+}
 .ti.ov{border-left:2px solid var(--red)}
 .ti.td{border-left:2px solid var(--ac)}
 .ti.fu{border-left:2px solid var(--blue)}
+.ti.dragging{opacity:.4;box-shadow:0 0 0 1.5px var(--ac)}
+.ti.drag-over{box-shadow:0 -2px 0 0 var(--ac)}
+
+/* 드래그 핸들 */
+.drag-handle{
+  display:flex;flex-direction:column;justify-content:center;gap:3px;
+  flex-shrink:0;cursor:grab;padding:2px 2px;opacity:.35;
+  transition:opacity .15s;
+}
+.drag-handle:active{cursor:grabbing}
+.ti:hover .drag-handle{opacity:.7}
+.drag-handle span{display:block;width:14px;height:1.5px;background:var(--t2);border-radius:1px;}
 
 .cb{width:18px;height:18px;flex-shrink:0;cursor:pointer;appearance:none;-webkit-appearance:none;border:1.5px solid var(--bd2);border-radius:5px;background:var(--s2);position:relative;transition:background .15s,border-color .15s;}
 .cb:checked{background:var(--ac);border-color:var(--ac)}
@@ -116,7 +133,6 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 .tg-study{background:var(--amb-bg);color:var(--amb)}
 .tg-health{background:var(--ac-bg);color:var(--ac)}
 
-/* 액션 버튼 - 항상 표시 */
 .item-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 .edit-btn{
   background:none;border:0.5px solid var(--bd2);border-radius:5px;
@@ -135,7 +151,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
 
 .empty{text-align:center;padding:3rem 1rem;font-size:13px;color:var(--t3);border:0.5px dashed var(--bd2);border-radius:var(--rl);margin-top:4px;line-height:1.9;}
 
-/* 완료 아이템 - opacity 제거, 글씨 밝게 */
+/* 완료 아이템 */
 .di{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s1);border:0.5px solid var(--bd);border-radius:var(--r);}
 .di .ttxt{font-size:14px;color:var(--t1);text-decoration:line-through;line-height:1.45;word-break:break-all}
 .di .tmeta .badge{opacity:.85}
@@ -186,8 +202,6 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   </div>
 
   <div class="content">
-
-    <!-- 할 일 뷰 -->
     <div class="view on" id="view-todo">
       <div class="add-wrap">
         <div class="add-box">
@@ -231,14 +245,12 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
       </div>
     </div>
 
-    <!-- 완료 뷰 -->
     <div class="view" id="view-done">
       <div class="scroll">
         <div class="t-list" id="done-list"></div>
         <button class="clear-btn" id="clear-btn" onclick="clearDone()" style="display:none">완료 항목 모두 삭제</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -274,26 +286,26 @@ const TAGS={
 
 let todos=[], ws=null, syncTimer=null, editingId=null
 
+/* ── 날짜 ── */
 function todayStr(){
   const d=new Date()
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
 }
-
 function dateMeta(str){
   if(!str)return null
   const diff=Math.round((new Date(str+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000)
-  if(diff<0) return{label:Math.abs(diff)+'일 지남',cls:'b-ov',type:'ov'}
+  if(diff<0)return{label:Math.abs(diff)+'일 지남',cls:'b-ov',type:'ov'}
   if(diff===0)return{label:'오늘',cls:'b-td',type:'td'}
   if(diff===1)return{label:'내일',cls:'b-fu',type:'fu'}
   const d=new Date(str+'T00:00:00')
   return{label:`${d.getMonth()+1}/${d.getDate()}`,cls:'b-fu',type:'fu'}
 }
 
+/* ── WebSocket ── */
 function connect(){
   const proto=location.protocol==='https:'?'wss':'ws'
-  const url=`${proto}://${location.host}`
   setSync('busy','연결 중...')
-  try{ ws=new WebSocket(url) }catch(e){ setTimeout(connect,3000);return }
+  try{ ws=new WebSocket(`${proto}://${location.host}`) }catch(e){ setTimeout(connect,3000);return }
   ws.onopen=()=>setSync('live','연결됨')
   ws.onmessage=e=>{
     try{
@@ -306,7 +318,6 @@ function connect(){
   ws.onclose=()=>{ setSync('err','연결 끊김'); setTimeout(connect,3000) }
   ws.onerror=()=>setSync('err','오류')
 }
-
 function setSync(state,txt){
   const dot=document.getElementById('sync-dot')
   const lbl=document.getElementById('sync-txt')
@@ -314,7 +325,6 @@ function setSync(state,txt){
   lbl.textContent=txt
   lbl.style.color=state==='live'?'var(--ac)':state==='busy'?'var(--amb)':'var(--red)'
 }
-
 function pushSync(){
   clearTimeout(syncTimer)
   syncTimer=setTimeout(()=>{
@@ -325,47 +335,44 @@ function pushSync(){
   },300)
 }
 
+/* ── CRUD ── */
 function addTask(){
   const inp=document.getElementById('new-task')
   const text=inp.value.trim()
   if(!text)return
   const date=document.getElementById('new-date').value||null
   const tag=document.getElementById('new-tag').value
-  todos.push({id:Date.now(),text,date,tag,done:false})
+  todos.push({id:Date.now(),text,date,tag,done:false,order:Date.now()})
   inp.value=''; inp.focus()
   pushSync(); renderTodo()
 }
-
 function toggleDone(id){
   const t=todos.find(t=>t.id===id)
   if(t){t.done=!t.done;t.doneAt=t.done?new Date().toISOString():null}
   pushSync(); renderTodo()
 }
-
 function undoDone(id){
   const t=todos.find(t=>t.id===id)
   if(t){t.done=false;t.doneAt=null}
   pushSync(); renderTodo(); renderDone()
 }
-
 function deleteTodo(id){
   if(!confirm('삭제할까요?'))return
   todos=todos.filter(t=>t.id!==id)
   pushSync(); renderTodo()
 }
-
 function deleteDone(id){
   if(!confirm('삭제할까요?'))return
   todos=todos.filter(t=>t.id!==id)
   pushSync(); renderDone()
 }
-
 function clearDone(){
   if(!confirm('완료 항목을 모두 삭제할까요?'))return
   todos=todos.filter(t=>!t.done)
   pushSync(); renderDone()
 }
 
+/* ── 수정 모달 ── */
 function openEdit(id){
   const t=todos.find(t=>t.id===id)
   if(!t)return
@@ -376,12 +383,10 @@ function openEdit(id){
   document.getElementById('edit-modal').classList.add('on')
   setTimeout(()=>document.getElementById('edit-text').focus(),50)
 }
-
 function closeEdit(){
   editingId=null
   document.getElementById('edit-modal').classList.remove('on')
 }
-
 function saveEdit(){
   if(!editingId)return
   const t=todos.find(t=>t.id===editingId)
@@ -391,18 +396,139 @@ function saveEdit(){
     t.date=document.getElementById('edit-date').value||null
     t.tag=document.getElementById('edit-tag').value
   }
-  closeEdit()
-  pushSync(); renderTodo(); renderDone()
+  closeEdit(); pushSync(); renderTodo(); renderDone()
 }
 
+/* ── 드래그 앤 드롭 ── */
+let dragId=null, dragOverId=null
+
+function onDragStart(e, id){
+  dragId=id
+  e.dataTransfer.effectAllowed='move'
+  // 약간의 딜레이로 dragging 클래스 적용 (렌더링 이슈 방지)
+  setTimeout(()=>{
+    const el=document.querySelector(`[data-id="${id}"]`)
+    if(el)el.classList.add('dragging')
+  },0)
+}
+function onDragEnd(e){
+  document.querySelectorAll('.ti').forEach(el=>{
+    el.classList.remove('dragging','drag-over')
+  })
+  if(dragId!==null && dragOverId!==null && dragId!==dragOverId){
+    // todos 배열에서 순서 변경
+    const pend=todos.filter(t=>!t.done)
+    const fromIdx=pend.findIndex(t=>t.id===dragId)
+    const toIdx=pend.findIndex(t=>t.id===dragOverId)
+    if(fromIdx!==-1&&toIdx!==-1){
+      // 전체 todos에서 미완료 항목만 순서 재배치
+      const pendIds=pend.map(t=>t.id)
+      pendIds.splice(fromIdx,1)
+      pendIds.splice(toIdx,0,dragId)
+      // todos를 새 순서로 재구성
+      const doneItems=todos.filter(t=>t.done)
+      const reordered=pendIds.map(id=>todos.find(t=>t.id===id))
+      todos=[...reordered,...doneItems]
+      pushSync(); renderTodo()
+    }
+  }
+  dragId=null; dragOverId=null
+}
+function onDragOver(e, id){
+  e.preventDefault()
+  e.dataTransfer.dropEffect='move'
+  if(dragOverId===id)return
+  dragOverId=id
+  document.querySelectorAll('.ti').forEach(el=>el.classList.remove('drag-over'))
+  const el=document.querySelector(`[data-id="${id}"]`)
+  if(el&&id!==dragId)el.classList.add('drag-over')
+}
+
+/* 터치 드래그 (모바일) */
+let touchDragId=null, touchClone=null, touchOffsetY=0, touchStartY=0
+
+function onTouchStart(e, id){
+  // 버튼 터치는 무시
+  if(e.target.closest('button')||e.target.closest('input'))return
+  touchDragId=id
+  touchStartY=e.touches[0].clientY
+  const el=document.querySelector(`[data-id="${id}"]`)
+  if(!el)return
+  const rect=el.getBoundingClientRect()
+  touchOffsetY=e.touches[0].clientY-rect.top
+  // 클론 생성
+  touchClone=el.cloneNode(true)
+  touchClone.style.cssText=`
+    position:fixed;left:${rect.left}px;top:${rect.top}px;
+    width:${rect.width}px;z-index:999;opacity:.85;
+    pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.5);
+    border:1px solid var(--ac);border-radius:10px;
+  `
+  document.body.appendChild(touchClone)
+  el.style.opacity='0.3'
+}
+function onTouchMove(e){
+  if(touchDragId===null)return
+  e.preventDefault()
+  const y=e.touches[0].clientY
+  if(touchClone)touchClone.style.top=(y-touchOffsetY)+'px'
+  // 어떤 아이템 위에 있는지 감지
+  const els=document.querySelectorAll('.ti')
+  els.forEach(el=>{
+    el.classList.remove('drag-over')
+    const rect=el.getBoundingClientRect()
+    if(y>=rect.top&&y<=rect.bottom){
+      const overId=Number(el.dataset.id)
+      if(overId!==touchDragId){
+        el.classList.add('drag-over')
+        dragOverId=overId
+      }
+    }
+  })
+}
+function onTouchEnd(){
+  if(touchDragId===null)return
+  // 클론 제거
+  if(touchClone){touchClone.remove();touchClone=null}
+  const el=document.querySelector(`[data-id="${touchDragId}"]`)
+  if(el)el.style.opacity=''
+  document.querySelectorAll('.ti').forEach(el=>el.classList.remove('drag-over'))
+  // 순서 변경
+  if(dragOverId!==null&&touchDragId!==dragOverId){
+    const pend=todos.filter(t=>!t.done)
+    const fromIdx=pend.findIndex(t=>t.id===touchDragId)
+    const toIdx=pend.findIndex(t=>t.id===dragOverId)
+    if(fromIdx!==-1&&toIdx!==-1){
+      const pendIds=pend.map(t=>t.id)
+      pendIds.splice(fromIdx,1)
+      pendIds.splice(toIdx,0,touchDragId)
+      const doneItems=todos.filter(t=>t.done)
+      const reordered=pendIds.map(id=>todos.find(t=>t.id===id))
+      todos=[...reordered,...doneItems]
+      pushSync(); renderTodo()
+    }
+  }
+  touchDragId=null; dragOverId=null
+}
+
+/* ── 렌더 ── */
 function makeItem(t){
   const div=document.createElement('div')
   const dm=dateMeta(t.date)
   div.className='ti '+(dm?dm.type:'')
+  div.dataset.id=t.id
+  div.draggable=true
+  div.addEventListener('dragstart',e=>onDragStart(e,t.id))
+  div.addEventListener('dragend',onDragEnd)
+  div.addEventListener('dragover',e=>onDragOver(e,t.id))
+  div.addEventListener('touchstart',e=>onTouchStart(e,t.id),{passive:false})
+  div.addEventListener('touchmove',onTouchMove,{passive:false})
+  div.addEventListener('touchend',onTouchEnd)
   const ti=TAGS[t.tag]||TAGS.personal
   const esc=t.text.replace(/&/g,'&amp;').replace(/</g,'&lt;')
   const db=dm?`<span class="badge ${dm.cls}">${dm.label}</span>`:''
   div.innerHTML=`
+    <div class="drag-handle"><span></span><span></span><span></span></div>
     <input type="checkbox" class="cb" onchange="toggleDone(${t.id})">
     <div class="tbody">
       <div class="ttxt">${esc}</div>
@@ -438,9 +564,9 @@ function makeDoneItem(t){
 function renderTodo(){
   const today=todayStr()
   const pend=todos.filter(t=>!t.done)
-  const ov=pend.filter(t=>t.date&&t.date<today).sort((a,b)=>a.date.localeCompare(b.date))
+  const ov=pend.filter(t=>t.date&&t.date<today)
   const td=pend.filter(t=>t.date===today)
-  const fu=pend.filter(t=>t.date&&t.date>today).sort((a,b)=>a.date.localeCompare(b.date))
+  const fu=pend.filter(t=>t.date&&t.date>today)
   const nd=pend.filter(t=>!t.date)
 
   const total=todos.length, dc=todos.filter(t=>t.done).length
@@ -460,13 +586,11 @@ function renderTodo(){
   c.innerHTML=''
   if(!pend.length){c.innerHTML='<div class="empty">미완료 항목이 없습니다</div>';return}
 
-  function sec(label,items){
-    if(!items.length)return
-    const l=document.createElement('div');l.className='sec-lbl';l.textContent=label;c.appendChild(l)
-    const w=document.createElement('div');w.className='t-list'
-    items.forEach(t=>w.appendChild(makeItem(t)));c.appendChild(w)
-  }
-  sec('기한 지남',ov);sec('오늘',td);sec('예정',fu);sec('날짜 없음',nd)
+  // 날짜 구분 없이 todos 배열 순서 그대로 표시 (섹션 제거)
+  const list=document.createElement('div')
+  list.className='t-list'
+  pend.forEach(t=>list.appendChild(makeItem(t)))
+  c.appendChild(list)
 }
 
 function renderDone(){
@@ -487,6 +611,7 @@ function switchTab(tab){
   if(tab==='done')renderDone()
 }
 
+/* ── 초기화 ── */
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{})
 document.getElementById('new-date').value=todayStr()
 connect()
