@@ -188,19 +188,19 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   font-size:18px;color:var(--t3);padding:0;line-height:1;
   opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;
 }
-.ti:hover .delbtn,.di:hover .delbtn{opacity:.6}
+.ti:hover .delbtn,.di:hover .delbtn{opacity:.7}
 .delbtn:hover{color:var(--red);opacity:1!important}
 
 .item-actions{
-  display:flex;align-items:center;gap:4px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
 }
 .editbtn{
-  background:none;border:none;cursor:pointer;
-  font-size:14px;color:var(--t3);padding:0 2px;line-height:1;
-  opacity:0;transition:opacity .15s,color .15s;flex-shrink:0;
+  background:none;border:0.5px solid var(--bd2);border-radius:5px;
+  cursor:pointer;font-size:11px;color:var(--t2);padding:3px 8px;
+  white-space:nowrap;flex-shrink:0;
+  font-family:inherit;transition:background .15s,color .15s;
 }
-.ti:hover .editbtn,.di:hover .editbtn{opacity:.6}
-.editbtn:hover{color:var(--blue);opacity:1!important}
+.editbtn:hover,.editbtn:active{background:var(--s3);color:var(--blue)}
 
 /* 수정 모달 */
 .modal-bg{
@@ -264,7 +264,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans'
   background:var(--s1);border:0.5px solid var(--bd);
   border-radius:var(--r);
 }
-.di .ttxt{text-decoration:line-through;color:var(--t2)}
+.di .ttxt{text-decoration:line-through;color:var(--t1);opacity:.75}
+.di .tmeta .badge{opacity:.8}
 .undo{
   background:none;border:0.5px solid var(--bd2);border-radius:5px;
   cursor:pointer;font-size:10px;color:var(--t2);padding:3px 7px;
@@ -541,7 +542,7 @@ function makeItem(t){
       <div class="tmeta">${db}<span class="badge ${ti.cls}">${ti.label}</span></div>
     </div>
     <div class="item-actions">
-      <button class="editbtn" onclick="openEdit(${t.id})" title="수정">✎</button>
+      <button class="editbtn" onclick="openEdit(${t.id})">수정</button>
       <button class="delbtn" onclick="deleteTodo(${t.id})">×</button>
     </div>`
   return div
@@ -561,8 +562,8 @@ function makeDoneItem(t){
     </div>
     <button class="undo" onclick="undoDone(${t.id})">되돌리기</button>
     <div class="item-actions">
-      <button class="editbtn" onclick="openEdit(${t.id})" title="수정">✎</button>
-      <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.4">×</button>
+      <button class="editbtn" onclick="openEdit(${t.id})">수정</button>
+      <button class="delbtn" onclick="deleteDone(${t.id})" style="opacity:.6">×</button>
     </div>`
   return div
 }
